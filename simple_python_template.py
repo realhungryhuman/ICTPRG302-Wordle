@@ -10,6 +10,23 @@ VALID_WORDS = './word-bank/all_words.txt'
 
 MAX_TRIES = 6
 
+
+def count_char_occurrences(word):
+    letter_occurrences = {}
+    for letter in word:
+        letter_occurrences[letter] = letter_occurrences.get(letter, 0) + 1
+
+    return letter_occurrences
+
+
+def extract_hints(hint_list):
+    hint_count = 0
+    for hint in hint_list:
+        (letter, answer) = hint
+        hint_list[hint_count] = answer
+        hint_count = hint_count + 1
+
+
 # TODO: select target word at random from TARGET_WORDS
 target_word = 'hello'
 
@@ -17,13 +34,40 @@ target_word = 'hello'
 # (start loop)
 guess = input("Enter guess? ")
 
+
 # TODO: ensure guess in VALID_WORDS
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
-if guess == target_word:
-    print("Your guess is correct!")
-else:
-    print("Your guess is wrong!")
+def score_guess(target, guess):
+    hints = ["-", "-", "-", "-", "-"]
+
+    if guess is target:
+        print("Your guess is correct!")
+        for hint in range(len(hints)):
+            hints[hint] = "+"
+    else:
+        print("Your guess is wrong!")
+
+        count = 0
+        for letter in guess:
+            if target.find(letter, count) == guess.find(letter, count):
+                hint_count = 0
+                for hint in hints:
+                    if hint == (letter, "?"):
+                        hints[hint_count] = (letter, "-")
+                    hint_count = hint_count + 1
+                hints[count] = (letter, "+")
+            elif target.find(letter) != -1:
+                hints[count] = (letter, "?")
+            else:
+                hints[count] = (letter, "-")
+            count = count + 1
+
+    extract_hints(hints)
+
+    print(f"Your Guess: {list(guess)}")
+    print(f"Hint: {hints}")
+
 
 # (end loop)
 print("Game Over")
@@ -52,6 +96,9 @@ def display_matching_characters(guess='hello', target_word='world'):
         print(char, target_word[i])
         i += 1
 
+
 # Uncomment to run:
 # display_matching_characters()
-# print(pick_target_word())
+print(pick_target_word())
+score_guess("hello", "world")
+
