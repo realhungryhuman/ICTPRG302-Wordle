@@ -12,11 +12,11 @@ MAX_TRIES = 6
 
 
 def count_char_occurrences(word):
-    letter_occurrences = {}
-    for letter in word:
-        letter_occurrences[letter] = letter_occurrences.get(letter, 0) + 1
+    character_occurrences = {}
+    for character in word:
+        character_occurrences[character] = character_occurrences.get(character, 0) + 1
 
-    return letter_occurrences
+    return character_occurrences
 
 
 def extract_hints(hint_list):
@@ -24,7 +24,7 @@ def extract_hints(hint_list):
     for hint in hint_list:
         (letter, answer) = hint
         hint_list[hint_count] = answer
-        hint_count = hint_count + 1
+        hint_count += 1
 
 
 # TODO: select target word at random from TARGET_WORDS
@@ -47,21 +47,32 @@ def score_guess(target, guess):
             hints[hint] = "+"
     else:
         print("Your guess is wrong!")
-
+        target_letter_occurrences = count_char_occurrences(target)
+        guess_letter_occurrences = count_char_occurrences(guess)
         count = 0
         for letter in guess:
             if target.find(letter, count) == guess.find(letter, count):
+                if guess_letter_occurrences[letter] > 1:
+                    hint_count = 0
+                    for hint in hints:
+                        if hint == (letter, "?"):
+                            hints[hint_count] = (letter, "-")
+                        hint_count += 1
+                    hints[count] = (letter, "+")
+            elif target.find(letter) != -1:
                 hint_count = 0
+                previous_occurrences = 0
                 for hint in hints:
                     if hint == (letter, "?"):
-                        hints[hint_count] = (letter, "-")
-                    hint_count = hint_count + 1
-                hints[count] = (letter, "+")
-            elif target.find(letter) != -1:
-                hints[count] = (letter, "?")
+                        previous_occurrences += 1
+                    hint_count += 1
+                if previous_occurrences == target_letter_occurrences[letter]:
+                    hints[count] = (letter, "-")
+                else:
+                    hints[count] = (letter, "?")
             else:
                 hints[count] = (letter, "-")
-            count = count + 1
+            count += 1
 
     extract_hints(hints)
 
@@ -100,5 +111,5 @@ def display_matching_characters(guess='hello', target_word='world'):
 # Uncomment to run:
 # display_matching_characters()
 print(pick_target_word())
-score_guess("hello", "world")
+score_guess("world", "hello")
 
