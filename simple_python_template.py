@@ -6,7 +6,7 @@ Guess-My-Word Project Application"""
 import random
 
 TARGET_WORDS = open('./word-bank/target_words.txt')
-VALID_WORDS = './word-bank/all_words.txt'
+VALID_WORDS = open('./word-bank/all_words.txt')
 
 MAX_TRIES = 6
 
@@ -20,9 +20,26 @@ def pick_target_word(target_words):
 # TODO: select target word at random from TARGET_WORDS
 target_word = pick_target_word(TARGET_WORDS).strip()
 
+
+def validate_guess(word, words_file):
+    for line in words_file:
+        if line.strip() == word:
+            return True
+    return False
+
+
 # TODO: repeat for MAX_TRIES valid attempts
 # (start loop)
-guess = input("Enter guess? ")
+attempts = 0
+while attempts < MAX_TRIES:
+    guess = input("Enter guess? ").strip().lower()
+    print(guess)
+    if validate_guess(guess, VALID_WORDS):
+        attempts += 1
+        VALID_WORDS.seek(0)
+    else:
+        print(f"{guess} is not a valid word. Please Try Again")
+        VALID_WORDS.seek(0)
 
 # TODO: ensure guess in VALID_WORDS
 
