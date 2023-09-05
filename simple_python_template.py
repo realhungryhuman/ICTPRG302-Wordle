@@ -5,25 +5,103 @@ Guess-My-Word Project Application"""
 
 import random
 
-TARGET_WORDS = './word-bank/target_words.txt'
-VALID_WORDS = './word-bank/all_words.txt'
+TARGET_WORDS = open('./word-bank/target_words.txt')
+VALID_WORDS = open('./word-bank/all_words.txt')
 
 MAX_TRIES = 6
 
+
+def pick_target_word(target_words):
+    """returns a random item from the list"""
+    words = list(target_words)
+    return random.choice(words)
+
+
+def count_char_occurrences(word):
+    character_occurrences = {}
+    for character in word:
+        character_occurrences[character] = character_occurrences.get(character, 0) + 1
+
+    return character_occurrences
+
+
+def extract_hints(hint_list):
+    hint_count = 0
+    for hint in hint_list:
+        (letter, answer) = hint
+        hint_list[hint_count] = answer
+        hint_count += 1
+
+
 # TODO: select target word at random from TARGET_WORDS
-target_word = 'hello'
+target_word = pick_target_word(TARGET_WORDS).strip()
+
+
+def validate_guess(word, words_file):
+    for line in words_file:
+        if line.strip() == word:
+            return True
+    return False
+
 
 # TODO: repeat for MAX_TRIES valid attempts
 # (start loop)
-guess = input("Enter guess? ")
+attempts = 0
+while attempts < MAX_TRIES:
+    guess = input("Enter guess? ").strip().lower()
+    print(guess)
+    if validate_guess(guess, VALID_WORDS):
+        attempts += 1
+        VALID_WORDS.seek(0)
+    else:
+        print(f"{guess} is not a valid word. Please Try Again")
+        VALID_WORDS.seek(0)
+
 
 # TODO: ensure guess in VALID_WORDS
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
-if guess == target_word:
-    print("Your guess is correct!")
-else:
-    print("Your guess is wrong!")
+def score_guess(target, guess):
+    hints = ["-", "-", "-", "-", "-"]
+
+    if guess is target:
+        print("Your guess is correct!")
+        for hint in range(len(hints)):
+            hints[hint] = "+"
+    else:
+        print("Your guess is wrong!")
+        target_letter_occurrences = count_char_occurrences(target)
+        guess_letter_occurrences = count_char_occurrences(guess)
+        count = 0
+        for letter in guess:
+            if target.find(letter, count) == guess.find(letter, count):
+                if guess_letter_occurrences[letter] > 1:
+                    hint_count = 0
+                    for hint in hints:
+                        if hint == (letter, "?"):
+                            hints[hint_count] = (letter, "-")
+                        hint_count += 1
+                    hints[count] = (letter, "+")
+            elif target.find(letter) != -1:
+                hint_count = 0
+                previous_occurrences = 0
+                for hint in hints:
+                    if hint == (letter, "?"):
+                        previous_occurrences += 1
+                    hint_count += 1
+                if previous_occurrences == target_letter_occurrences[letter]:
+                    hints[count] = (letter, "-")
+                else:
+                    hints[count] = (letter, "?")
+            else:
+                hints[count] = (letter, "-")
+            count += 1
+
+    extract_hints(hints)
+
+    print(f"Your Guess: {list(guess)}")
+    print(f"Hint: {hints}")
+
 
 # (end loop)
 print("Game Over")
@@ -39,12 +117,6 @@ print("Game Over")
 # ========
 # A set of helpful snippets that may help you meet the project requirements.
 
-def pick_target_word(words=None):
-    """returns a random item from the list"""
-    words = ['a', 'b', 'c']
-    return random.choice(words)
-
-
 def display_matching_characters(guess='hello', target_word='world'):
     """Get characters in guess that correspond to characters in the target_word"""
     i = 0
@@ -52,6 +124,9 @@ def display_matching_characters(guess='hello', target_word='world'):
         print(char, target_word[i])
         i += 1
 
+
 # Uncomment to run:
 # display_matching_characters()
-# print(pick_target_word())
+print(pick_target_word())
+score_guess("world", "hello")
+
