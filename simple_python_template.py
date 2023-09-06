@@ -1,5 +1,8 @@
 """NMTAFE ICTPRG302:
 Guess-My-Word Project Application"""
+# Author: Dylan McClarence
+# Company: North Metropolitan TAFE
+# Copyright: 2023
 # See the assignment worksheet and journal for further details.
 # Begin by completing the TODO items below in the order you specified in the journal
 
@@ -21,11 +24,14 @@ MAX_TRIES = 6
 
 def pick_target_word(target_words):
     """returns a random item from the list"""
+
     words = list(target_words)
     return random.choice(words)
 
 
 def count_char_occurrences(word):
+    """returns a dictionary indexed by character, counting the number of occurrences in a word"""
+
     character_occurrences = {}
     for character in word:
         character_occurrences[character] = character_occurrences.get(character, 0) + 1
@@ -33,6 +39,14 @@ def count_char_occurrences(word):
 
 
 def extract_hints(hint_list):
+    """Extracts the character hint from the (letter, hint) tuple
+    # >>> extract_hints([(h, 2), (e, 2), (l, 2), (l, 2), (o, 2)])
+    [2, 2, 2, 2, 2]
+    # >>> extract_hints([(h, 0), (e, 0), (l, 1), (l, 0), (o, 2)])
+    [0, 0, 1, 0, 2]
+    # >>> extract_hints([(h, 0), (e, 0), (l, 0), (l, 0), (o, 0)])
+    [0, 0, 0, 0, 0]"""
+
     hint_count = 0
     for hint in hint_list:
         (letter, answer) = hint
@@ -42,6 +56,14 @@ def extract_hints(hint_list):
 
 # TODO: ensure guess in VALID_WORDS
 def validate_guess(word, words_file):
+    """Validates user input by checking if the word exists in a file
+    # >>> validate_guess("hello", VALID_WORDS)
+    True
+    # >>> validate_guess("steal", VALID_WORDS)
+    True
+    # >>> validate_guess("xxxxx", VALID_WORDS)
+    False"""
+
     for line in words_file:
         if line.strip() == word:
             return True
@@ -50,6 +72,27 @@ def validate_guess(word, words_file):
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
 def score_guess(target, guess):
+    """given two strings of equal length, returns a tuple of ints representing the score of the guess
+    against the target word (WRONG, MISPLACED, or CORRECT)
+    Here are some example (will run as doctest):
+
+    # >>> score_guess('hello', 'hello')
+    (2, 2, 2, 2, 2)
+    # >>> score_guess('drain', 'float')
+    (0, 0, 1, 0, 0)
+    # >>> score_guess('hello', 'spams')
+    (0, 0, 0, 0, 0)
+
+    Try and pass the first few tests in the doctest before passing these tests.
+    # >>> score_guess('gauge', 'range')
+    (0, 2, 0, 2, 2)
+    # >>> score_guess('melee', 'erect')
+    (0, 1, 0, 1, 0)
+    # >>> score_guess('array', 'spray')
+    (0, 0, 2, 2, 2)
+    # >>> score_guess('train', 'tenor')
+    (2, 1, 0, 0, 1)"""
+
     hints = [EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2]
 
     if guess == target:
@@ -87,6 +130,17 @@ def score_guess(target, guess):
 
 
 def is_correct(hint):
+    """Checks if the score is entirely correct and returns True if it is
+    Examples:
+    # >>> is_correct((1,1,1,1,1))
+    False
+    # >>> is_correct((2,2,2,2,1))
+    False
+    # >>> is_correct((0,0,0,0,0))
+    False
+    # >>> is_correct((2,2,2,2,2))
+    True"""
+
     if hint == GAME_WIN:
         return True
     return False
@@ -94,19 +148,20 @@ def is_correct(hint):
 
 def format_score(guess, hint):
     """Formats a guess with a given score as output to the terminal.
-        The following is an example output:
-        # >>> format_score('hello', (0,0,0,0,0))
-        Guess: H E L L O
-        Hint:  _ _ _ _ _
-        # >>> format_score('hello', (0,0,0,1,1))
-        Guess: H E L L O
-        Hint:  _ _ _ ? ?
-        # >>> format_score('hello', (1,0,0,2,1))
-        Guess: H E L L O
-        Hint:  ? _ _ + ?
-        # >>> format_score('hello', (2,2,2,2,2))
-        Guess: H E L L O
-        Hint:  + + + + +"""
+    The following is an example output:
+    # >>> format_score('hello', (0,0,0,0,0))
+    Guess: H E L L O
+    Hint:  _ _ _ _ _
+    # >>> format_score('hello', (0,0,0,1,1))
+    Guess: H E L L O
+    Hint:  _ _ _ ? ?
+    # >>> format_score('hello', (1,0,0,2,1))
+    Guess: H E L L O
+    Hint:  ? _ _ + ?
+    # >>> format_score('hello', (2,2,2,2,2))
+    Guess: H E L L O
+    Hint:  + + + + +"""
+
     formatted_hint = []
     for index in range(len(hint)):
         if hint[index] == CORRECT:
@@ -155,12 +210,3 @@ def main():
 
 
 main()
-# NOTES:
-# ======
-# - Add your own flair to the project
-# - You will be required to add and refine features based on changing requirements
-# - Ensure your code passes any tests you have defined for it.
-
-# SNIPPETS
-# ========
-# A set of helpful snippets that may help you meet the project requirements.
