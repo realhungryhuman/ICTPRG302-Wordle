@@ -37,32 +37,13 @@ def convert_list_to_tuple(list):
     return(*list, )
 
 
-# TODO: select target word at random from TARGET_WORDS
-target_word = pick_target_word(TARGET_WORDS).strip()
-
-
+# TODO: ensure guess in VALID_WORDS
 def validate_guess(word, words_file):
     for line in words_file:
         if line.strip() == word:
             return True
     return False
 
-
-# TODO: repeat for MAX_TRIES valid attempts
-# (start loop)
-attempts = 0
-while attempts < MAX_TRIES:
-    guess = input("Enter guess? ").strip().lower()
-    print(guess)
-    if validate_guess(guess, VALID_WORDS):
-        attempts += 1
-        VALID_WORDS.seek(0)
-    else:
-        print(f"{guess} is not a valid word. Please Try Again")
-        VALID_WORDS.seek(0)
-
-
-# TODO: ensure guess in VALID_WORDS
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
 def score_guess(target, guess):
@@ -109,10 +90,34 @@ def score_guess(target, guess):
         print(f"Hint:  {hints[0]} {hints[1]} {hints[2]} {hints[3]} {hints[4]}")
 
 
-# (end loop)
-print("Game Over")
+def game_loop():
+    # (start loop)
+    # TODO: select target word at random from TARGET_WORDS
+    target_word = pick_target_word(TARGET_WORDS).strip()
+
+    # TODO: repeat for MAX_TRIES valid attempts
+    attempts = 0
+    while attempts < MAX_TRIES:
+        guess = input(f"Enter guess? (Cheat: {target_word}) ").strip().lower()
+        if validate_guess(guess, VALID_WORDS):
+            if score_guess(target_word, guess):
+                break
+            else:
+                attempts += 1
+                VALID_WORDS.seek(0)
+        else:
+            print(f"{guess} is not a valid word. Please Try Again")
+            VALID_WORDS.seek(0)
+    print(f"The word was {target_word}.")
+    print("Game Over")
+    # (end loop)
 
 
+def main():
+    game_loop()
+
+
+main()
 # NOTES:
 # ======
 # - Add your own flair to the project
@@ -122,17 +127,3 @@ print("Game Over")
 # SNIPPETS
 # ========
 # A set of helpful snippets that may help you meet the project requirements.
-
-def display_matching_characters(guess='hello', target_word='world'):
-    """Get characters in guess that correspond to characters in the target_word"""
-    i = 0
-    for char in guess:
-        print(char, target_word[i])
-        i += 1
-
-
-# Uncomment to run:
-# display_matching_characters()
-print(pick_target_word())
-score_guess("world", "hello")
-
