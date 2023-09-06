@@ -33,8 +33,9 @@ def extract_hints(hint_list):
         hint_count += 1
 
 
-def convert_list_to_tuple(list)
+def convert_list_to_tuple(list):
     return(*list, )
+
 
 # TODO: select target word at random from TARGET_WORDS
 target_word = pick_target_word(TARGET_WORDS).strip()
