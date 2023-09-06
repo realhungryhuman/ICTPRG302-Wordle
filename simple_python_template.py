@@ -154,16 +154,16 @@ def is_correct(hint):
 def format_score(guess, hint):
     """Formats a guess with a given score as output to the terminal.
     The following is an example output:
-    # >>> format_score('hello', (0,0,0,0,0))
+    >>> format_score('hello', (0,0,0,0,0))
     Guess: H E L L O
     Hint:  _ _ _ _ _
-    # >>> format_score('hello', (0,0,0,1,1))
+    >>> format_score('hello', (0,0,0,1,1))
     Guess: H E L L O
     Hint:  _ _ _ ? ?
-    # >>> format_score('hello', (1,0,0,2,1))
+    >>> format_score('hello', (1,0,0,2,1))
     Guess: H E L L O
     Hint:  ? _ _ + ?
-    # >>> format_score('hello', (2,2,2,2,2))
+    >>> format_score('hello', (2,2,2,2,2))
     Guess: H E L L O
     Hint:  + + + + +"""
 
@@ -211,8 +211,12 @@ def game_loop():
     # (end loop)
 
 
-def main():
+def main(test=False):
+    if test:
+        import doctest
+        doctest.testmod()
     game_loop()
 
 
-main()
+if __name__ == '__main__':
+    main(test=True)
