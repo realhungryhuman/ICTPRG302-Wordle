@@ -16,22 +16,25 @@ WRONG = 0
 
 GAME_WIN = (CORRECT, CORRECT, CORRECT, CORRECT, CORRECT)
 
-TARGET_WORDS = open('./word-bank/target_words.txt')
-VALID_WORDS = open('./word-bank/all_words.txt')
+TARGET_WORDS = './word-bank/target_words.txt'
+VALID_WORDS = './word-bank/all_words.txt'
 
 MAX_TRIES = 6
 
 
+def open_word_bank(word_bank_file):
+    word_bank = open(word_bank_file)
+    valid_words = word_bank.read().splitlines()
+    return valid_words
+
+
 def pick_target_word(target_words):
     """returns a random item from the list"""
-
-    words = list(target_words)
-    return random.choice(words)
+    return random.choice(target_words)
 
 
 def count_char_occurrences(word):
     """returns a dictionary indexed by character, counting the number of occurrences in a word"""
-
     character_occurrences = {}
     for character in word:
         character_occurrences[character] = character_occurrences.get(character, 0) + 1
@@ -40,6 +43,7 @@ def count_char_occurrences(word):
 
 def extract_hints(hint_list):
     """Extracts the character hint from the (letter, hint) tuple
+
     # >>> extract_hints([(h, 2), (e, 2), (l, 2), (l, 2), (o, 2)])
     [2, 2, 2, 2, 2]
     # >>> extract_hints([(h, 0), (e, 0), (l, 1), (l, 0), (o, 2)])
@@ -55,8 +59,9 @@ def extract_hints(hint_list):
 
 
 # TODO: ensure guess in VALID_WORDS
-def validate_guess(word, words_file):
+def validate_guess(guess, word_list):
     """Validates user input by checking if the word exists in a file
+
     # >>> validate_guess("hello", VALID_WORDS)
     True
     # >>> validate_guess("steal", VALID_WORDS)
@@ -64,8 +69,8 @@ def validate_guess(word, words_file):
     # >>> validate_guess("xxxxx", VALID_WORDS)
     False"""
 
-    for line in words_file:
-        if line.strip() == word:
+    for word in word_list:
+        if word == guess:
             return True
     return False
 
@@ -179,28 +184,29 @@ def format_score(guess, hint):
 
 def game_loop():
     # (start loop)
+    target_word_bank = open_word_bank(TARGET_WORDS)
+    valid_word_bank = open_word_bank(VALID_WORDS)
+
     # TODO: select target word at random from TARGET_WORDS
-    target_word = pick_target_word(TARGET_WORDS).strip()
+    target_word = pick_target_word(target_word_bank)
 
     # TODO: repeat for MAX_TRIES valid attempts
     attempts = 0
     while attempts < MAX_TRIES:
-        guess = input(f"Enter guess? (Cheat: {target_word}) ").strip().lower()
-        if validate_guess(guess, VALID_WORDS):
+        guess = input(f"Enter guess? (Cheat: {target_word})").strip().lower()
+        if validate_guess(guess, valid_word_bank):
             hint = score_guess(target_word, guess)
             if is_correct(hint):
-                print(f"Your guess, {guess}, is correct!")
+                print(f"Your guess, {guess.upper()}, is correct!")
                 break
             else:
                 print("Your guess is wrong!")
                 format_score(guess, hint)
                 attempts += 1
-                VALID_WORDS.seek(0)
         else:
             print(f"{guess} is not a valid word. Please Try Again")
-            VALID_WORDS.seek(0)
     if attempts == MAX_TRIES:
-        print(f"The word was {target_word}.")
+        print(f"The word was {target_word.upper()}.")
     print("Game Over")
     # (end loop)
 
