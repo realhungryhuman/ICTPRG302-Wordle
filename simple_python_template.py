@@ -27,6 +27,9 @@ def extract_hints(hint_list):
         hint_count += 1
 
 
+def convert_list_to_tuple(list)
+    return(*list, )
+
 # TODO: select target word at random from TARGET_WORDS
 target_word = 'hello'
 
@@ -44,7 +47,9 @@ def score_guess(target, guess):
     if guess == target:
         print(f"Your guess, {guess}, is correct!")
         for position in range(len(guess)):
-            hints[position] = (guess[position], "+")
+            hints[position] = (guess[position], 2)
+        extract_hints(hints)
+        convert_list_to_tuple(hints)
         return True
     else:
         print("Your guess is wrong!")
@@ -75,6 +80,7 @@ def score_guess(target, guess):
                 hints[count] = (letter, "-")
             count += 1
         extract_hints(hints)
+        convert_list_to_tuple(hints)
         print(f"Guess: {guess[0]} {guess[1]} {guess[2]} {guess[3]} {guess[4]}")
         print(f"Hint:  {hints[0]} {hints[1]} {hints[2]} {hints[3]} {hints[4]}")
 
