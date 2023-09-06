@@ -5,6 +5,14 @@ Guess-My-Word Project Application"""
 
 import random
 
+EMPTY_TUPLE2 = ("", "")
+
+CORRECT = 2
+MISPLACED = 1
+WRONG = 0
+
+GAME_WIN = (CORRECT, CORRECT, CORRECT, CORRECT, CORRECT)
+
 TARGET_WORDS = open('./word-bank/target_words.txt')
 VALID_WORDS = open('./word-bank/all_words.txt')
 
@@ -21,7 +29,6 @@ def count_char_occurrences(word):
     character_occurrences = {}
     for character in word:
         character_occurrences[character] = character_occurrences.get(character, 0) + 1
-
     return character_occurrences
 
 
@@ -31,10 +38,6 @@ def extract_hints(hint_list):
         (letter, answer) = hint
         hint_list[hint_count] = answer
         hint_count += 1
-
-
-def convert_list_to_tuple(list):
-    return(*list, )
 
 
 # TODO: ensure guess in VALID_WORDS
@@ -47,17 +50,12 @@ def validate_guess(word, words_file):
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
 def score_guess(target, guess):
-    hints = [("", ""), ("", ""), ("", ""), ("", ""), ("", "")]
+    hints = [EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2]
 
     if guess == target:
-        print(f"Your guess, {guess}, is correct!")
         for position in range(len(guess)):
-            hints[position] = (guess[position], 2)
-        extract_hints(hints)
-        convert_list_to_tuple(hints)
-        return True
+            hints[position] = (guess[position], CORRECT)
     else:
-        print("Your guess is wrong!")
         target_letter_occurrences = count_char_occurrences(target)
         guess_letter_occurrences = count_char_occurrences(guess)
         count = 0
@@ -66,28 +64,62 @@ def score_guess(target, guess):
                 if guess_letter_occurrences[letter] > 1:
                     hint_count = 0
                     for hint in hints:
-                        if hint == (letter, "?"):
-                            hints[hint_count] = (letter, "-")
+                        if hint == (letter, MISPLACED):
+                            hints[hint_count] = (letter, WRONG)
                         hint_count += 1
-                hints[count] = (letter, "+")
+                hints[count] = (letter, CORRECT)
             elif target.find(letter) != -1:
                 hint_count = 0
                 previous_occurrences = 0
                 for hint in hints:
-                    if hint == (letter, "?"):
+                    if hint == (letter, MISPLACED):
                         previous_occurrences += 1
                     hint_count += 1
                 if previous_occurrences == target_letter_occurrences[letter]:
-                    hints[count] = (letter, "-")
+                    hints[count] = (letter, WRONG)
                 else:
-                    hints[count] = (letter, "?")
+                    hints[count] = (letter, MISPLACED)
             else:
-                hints[count] = (letter, "-")
+                hints[count] = (letter, WRONG)
             count += 1
-        extract_hints(hints)
-        convert_list_to_tuple(hints)
-        print(f"Guess: {guess[0]} {guess[1]} {guess[2]} {guess[3]} {guess[4]}")
-        print(f"Hint:  {hints[0]} {hints[1]} {hints[2]} {hints[3]} {hints[4]}")
+    extract_hints(hints)
+    return tuple(hints)
+
+
+def is_correct(hint):
+    if hint == GAME_WIN:
+        return True
+    return False
+
+
+def format_score(guess, hint):
+    """Formats a guess with a given score as output to the terminal.
+        The following is an example output:
+        # >>> format_score('hello', (0,0,0,0,0))
+        Guess: H E L L O
+        Hint:  _ _ _ _ _
+        # >>> format_score('hello', (0,0,0,1,1))
+        Guess: H E L L O
+        Hint:  _ _ _ ? ?
+        # >>> format_score('hello', (1,0,0,2,1))
+        Guess: H E L L O
+        Hint:  ? _ _ + ?
+        # >>> format_score('hello', (2,2,2,2,2))
+        Guess: H E L L O
+        Hint:  + + + + +"""
+    formatted_hint = []
+    for index in range(len(hint)):
+        if hint[index] == CORRECT:
+            formatted_hint.append("+")
+        elif hint[index] == MISPLACED:
+            formatted_hint.append("?")
+        else:
+            formatted_hint.append("_")
+    formatted_guess = guess.upper()
+    print(f"Guess: {formatted_guess[0]} {formatted_guess[1]} {formatted_guess[2]} "
+          f"{formatted_guess[3]} {formatted_guess[4]}")
+    print(f"Hint:  {formatted_hint[0]} {formatted_hint[1]} {formatted_hint[2]} "
+          f"{formatted_hint[3]} {formatted_hint[4]}")
 
 
 def game_loop():
@@ -100,15 +132,20 @@ def game_loop():
     while attempts < MAX_TRIES:
         guess = input(f"Enter guess? (Cheat: {target_word}) ").strip().lower()
         if validate_guess(guess, VALID_WORDS):
-            if score_guess(target_word, guess):
+            hint = score_guess(target_word, guess)
+            if is_correct(hint):
+                print(f"Your guess, {guess}, is correct!")
                 break
             else:
+                print("Your guess is wrong!")
+                format_score(guess, hint)
                 attempts += 1
                 VALID_WORDS.seek(0)
         else:
             print(f"{guess} is not a valid word. Please Try Again")
             VALID_WORDS.seek(0)
-    print(f"The word was {target_word}.")
+    if attempts == MAX_TRIES:
+        print(f"The word was {target_word}.")
     print("Game Over")
     # (end loop)
 
