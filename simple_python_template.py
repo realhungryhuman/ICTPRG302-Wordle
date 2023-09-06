@@ -39,12 +39,13 @@ guess = input("Enter guess? ")
 
 # TODO: provide clues for each character in the guess using your scoring algorithm
 def score_guess(target, guess):
-    hints = ["-", "-", "-", "-", "-"]
+    hints = [("", ""), ("", ""), ("", ""), ("", ""), ("", "")]
 
-    if guess is target:
-        print("Your guess is correct!")
-        for hint in range(len(hints)):
-            hints[hint] = "+"
+    if guess == target:
+        print(f"Your guess, {guess}, is correct!")
+        for position in range(len(guess)):
+            hints[position] = (guess[position], "+")
+        return True
     else:
         print("Your guess is wrong!")
         target_letter_occurrences = count_char_occurrences(target)
@@ -58,7 +59,7 @@ def score_guess(target, guess):
                         if hint == (letter, "?"):
                             hints[hint_count] = (letter, "-")
                         hint_count += 1
-                    hints[count] = (letter, "+")
+                hints[count] = (letter, "+")
             elif target.find(letter) != -1:
                 hint_count = 0
                 previous_occurrences = 0
@@ -73,11 +74,9 @@ def score_guess(target, guess):
             else:
                 hints[count] = (letter, "-")
             count += 1
-
-    extract_hints(hints)
-
-    print(f"Your Guess: {list(guess)}")
-    print(f"Hint: {hints}")
+        extract_hints(hints)
+        print(f"Guess: {guess[0]} {guess[1]} {guess[2]} {guess[3]} {guess[4]}")
+        print(f"Hint:  {hints[0]} {hints[1]} {hints[2]} {hints[3]} {hints[4]}")
 
 
 # (end loop)
