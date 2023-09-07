@@ -6,7 +6,7 @@ Guess-My-Word Project Application"""
 
 import random
 
-EMPTY_TUPLE2 = ("", "")
+EMPTY_TUPLE2 = ("", "")  # define a variable for a tuple of two empty strings
 
 CORRECT = 2  # Correct letter in the correct position
 MISPLACED = 1  # Correct letter in the wrong position
@@ -18,6 +18,16 @@ TARGET_WORDS = './word-bank/target_words.txt'
 VALID_WORDS = './word-bank/all_words.txt'
 
 MAX_TRIES = 6
+
+
+def guess_my_word_help():
+    print(f"Welcome to Guess my Word!\n"
+          f"You have {MAX_TRIES} attempts to guess the unknown word.\n\n"
+          f"Enter a 5 letter and get hints for each letter:\n"
+          f"    + = Right Letter, Right Position\n"
+          f"    ? = Right Letter, Wrong Position\n"
+          f"    _ = Wrong Letter\n\n"
+          f"Good Luck!\n")
 
 
 def open_word_bank(word_bank_file):
@@ -220,9 +230,9 @@ def format_score(guess, hint):
             formatted_hint.append("_")
     formatted_guess = guess.upper()
     print(f"Guess: {formatted_guess[0]} {formatted_guess[1]} {formatted_guess[2]} "
-          f"{formatted_guess[3]} {formatted_guess[4]}")
-    print(f"Hint:  {formatted_hint[0]} {formatted_hint[1]} {formatted_hint[2]} "
-          f"{formatted_hint[3]} {formatted_hint[4]}")
+          f"{formatted_guess[3]} {formatted_guess[4]}\n"
+          f"Hint:  {formatted_hint[0]} {formatted_hint[1]} {formatted_hint[2]} "
+          f"{formatted_hint[3]} {formatted_hint[4]}\n")
 
 
 def game_loop():
@@ -233,18 +243,18 @@ def game_loop():
 
     attempts = 0  # Count for the players attempts
     while attempts < MAX_TRIES:
-        guess = input(f"Enter guess? (Cheat: {target_word})").strip().lower()
+        guess = input(f"Enter guess? (Cheat: {target_word})\n").strip().lower()
         if validate_guess(guess, valid_word_bank):
             hint = score_guess(target_word, guess)
             if is_correct(hint):
-                print(f"Your guess, {guess.upper()}, is correct!")
+                print(f"Your guess, {guess.upper()}, is correct!\n")
                 break
             else:
                 print("Your guess is wrong!")
                 format_score(guess, hint)
                 attempts += 1
         else:
-            print(f"{guess} is not a valid word. Please Try Again")
+            print(f"{guess} is not a valid word. Please Try Again\n")
     if attempts == MAX_TRIES:
         print(f"The word was {target_word.upper()}.")
     print("Game Over")
@@ -254,6 +264,7 @@ def main(test=False):
     if test:
         import doctest
         doctest.testmod()
+    guess_my_word_help()
     game_loop()
 
 
