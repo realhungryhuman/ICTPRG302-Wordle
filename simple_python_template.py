@@ -2,19 +2,17 @@
 Guess-My-Word Project Application"""
 # Author: Dylan McClarence
 # Company: North Metropolitan TAFE
-# Copyright: 2023
-# See the assignment worksheet and journal for further details.
-# Begin by completing the TODO items below in the order you specified in the journal
+# Year: 2023
 
 import random
 
 EMPTY_TUPLE2 = ("", "")
 
-CORRECT = 2
-MISPLACED = 1
-WRONG = 0
+CORRECT = 2  # Correct letter in the correct position
+MISPLACED = 1  # Correct letter in the wrong position
+WRONG = 0  # Letter is not in the target word
 
-GAME_WIN = (CORRECT, CORRECT, CORRECT, CORRECT, CORRECT)
+GAME_WIN = (CORRECT, CORRECT, CORRECT, CORRECT, CORRECT)  # Required value to win game
 
 TARGET_WORDS = './word-bank/target_words.txt'
 VALID_WORDS = './word-bank/all_words.txt'
@@ -23,18 +21,35 @@ MAX_TRIES = 6
 
 
 def open_word_bank(word_bank_file):
+    """
+    returns a list of words from a file
+
+    :param word_bank_file: string
+    :returns: list
+    """
     word_bank = open(word_bank_file)
-    valid_words = word_bank.read().splitlines()
-    return valid_words
+    words = word_bank.read().splitlines()
+    return words
 
 
 def pick_target_word(target_words):
-    """returns a random item from the list"""
+    """
+    returns a random word from a list of words
+
+    :param target_words: list
+    :returns: string
+    """
+
     return random.choice(target_words)
 
 
 def count_char_occurrences(word):
-    """returns a dictionary indexed by character, counting the number of occurrences in a word"""
+    """
+    returns a dictionary indexed by character, counting the number of occurrences in a word
+
+    :param word: string
+    :returns: dictionary
+    """
     character_occurrences = {}
     for character in word:
         character_occurrences[character] = character_occurrences.get(character, 0) + 1
@@ -42,14 +57,19 @@ def count_char_occurrences(word):
 
 
 def extract_hints(hint_list):
-    """Extracts the character hint from the (letter, hint) tuple
+    """
+    Extracts the character hint from the (letter, hint) tuple
+
+    :param hint_list: list
+    :returns: list
 
     # >>> extract_hints([(h, 2), (e, 2), (l, 2), (l, 2), (o, 2)])
     [2, 2, 2, 2, 2]
     # >>> extract_hints([(h, 0), (e, 0), (l, 1), (l, 0), (o, 2)])
     [0, 0, 1, 0, 2]
     # >>> extract_hints([(h, 0), (e, 0), (l, 0), (l, 0), (o, 0)])
-    [0, 0, 0, 0, 0]"""
+    [0, 0, 0, 0, 0]
+    """
 
     hint_count = 0
     for hint in hint_list:
@@ -58,16 +78,21 @@ def extract_hints(hint_list):
         hint_count += 1
 
 
-# TODO: ensure guess in VALID_WORDS
 def validate_guess(guess, word_list):
-    """Validates user input by checking if the word exists in a file
+    """
+    Validates user input by checking if the word exists in a file
+
+    :param guess: string
+    :param word_list: list
+    :returns: bool
 
     # >>> validate_guess("hello", VALID_WORDS)
     True
     # >>> validate_guess("steal", VALID_WORDS)
     True
     # >>> validate_guess("xxxxx", VALID_WORDS)
-    False"""
+    False
+    """
 
     for word in word_list:
         if word == guess:
@@ -75,11 +100,14 @@ def validate_guess(guess, word_list):
     return False
 
 
-# TODO: provide clues for each character in the guess using your scoring algorithm
 def score_guess(target, guess):
-    """given two strings of equal length, returns a tuple of ints representing the score of the guess
+    """
+    given two strings of equal length, returns a tuple of ints representing the score of the guess
     against the target word (WRONG, MISPLACED, or CORRECT)
-    Here are some example (will run as doctest):
+
+    :param target: string
+    :param guess: string
+    :returns: tuple
 
     # >>> score_guess('hello', 'hello')
     (2, 2, 2, 2, 2)
@@ -96,7 +124,8 @@ def score_guess(target, guess):
     # >>> score_guess('array', 'spray')
     (0, 0, 2, 2, 2)
     # >>> score_guess('train', 'tenor')
-    (2, 1, 0, 0, 1)"""
+    (2, 1, 0, 0, 1)
+    """
 
     hints = [EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2]
 
@@ -106,9 +135,11 @@ def score_guess(target, guess):
     else:
         target_letter_occurrences = count_char_occurrences(target)
         guess_letter_occurrences = count_char_occurrences(guess)
-        count = 0
+        count = 0  # Index for current position
         for letter in guess:
             if target.find(letter, count) == guess.find(letter, count):
+                # Updates previous hints if letter marked as MISPLACED but later in the word are CORRECT
+                # Only done if the letter appears in the word more than once to avoid unnecessary calculations
                 if guess_letter_occurrences[letter] > 1:
                     hint_count = 0
                     for hint in hints:
@@ -117,12 +148,14 @@ def score_guess(target, guess):
                         hint_count += 1
                 hints[count] = (letter, CORRECT)
             elif target.find(letter) != -1:
-                hint_count = 0
+                # Checks to make sure the letter is only marked as MISPLACED if it hasn't appeared
+                # more times than it does in the target word
+                # hint_count = 0
                 previous_occurrences = 0
                 for hint in hints:
                     if hint == (letter, MISPLACED):
                         previous_occurrences += 1
-                    hint_count += 1
+                    # hint_count += 1
                 if previous_occurrences == target_letter_occurrences[letter]:
                     hints[count] = (letter, WRONG)
                 else:
@@ -130,12 +163,16 @@ def score_guess(target, guess):
             else:
                 hints[count] = (letter, WRONG)
             count += 1
-    extract_hints(hints)
+    extract_hints(hints)  # Removes the letter of each position in the list
     return tuple(hints)
 
 
 def is_correct(hint):
     """Checks if the score is entirely correct and returns True if it is
+
+    :param hint: tuple
+    :returns: bool
+
     Examples:
     # >>> is_correct((1,1,1,1,1))
     False
@@ -144,7 +181,8 @@ def is_correct(hint):
     # >>> is_correct((0,0,0,0,0))
     False
     # >>> is_correct((2,2,2,2,2))
-    True"""
+    True
+    """
 
     if hint == GAME_WIN:
         return True
@@ -152,20 +190,25 @@ def is_correct(hint):
 
 
 def format_score(guess, hint):
-    """Formats a guess with a given score as output to the terminal.
-    The following is an example output:
-    >>> format_score('hello', (0,0,0,0,0))
+    """
+    Formats a guess with a given score as output to the terminal.
+
+    :param guess: string
+    :param hint: tuple
+
+    # >>> format_score('hello', (0,0,0,0,0))
     Guess: H E L L O
     Hint:  _ _ _ _ _
-    >>> format_score('hello', (0,0,0,1,1))
+    # >>> format_score('hello', (0,0,0,1,1))
     Guess: H E L L O
     Hint:  _ _ _ ? ?
-    >>> format_score('hello', (1,0,0,2,1))
+    # >>> format_score('hello', (1,0,0,2,1))
     Guess: H E L L O
     Hint:  ? _ _ + ?
-    >>> format_score('hello', (2,2,2,2,2))
+    # >>> format_score('hello', (2,2,2,2,2))
     Guess: H E L L O
-    Hint:  + + + + +"""
+    Hint:  + + + + +
+    """
 
     formatted_hint = []
     for index in range(len(hint)):
@@ -183,15 +226,12 @@ def format_score(guess, hint):
 
 
 def game_loop():
-    # (start loop)
     target_word_bank = open_word_bank(TARGET_WORDS)
     valid_word_bank = open_word_bank(VALID_WORDS)
 
-    # TODO: select target word at random from TARGET_WORDS
     target_word = pick_target_word(target_word_bank)
 
-    # TODO: repeat for MAX_TRIES valid attempts
-    attempts = 0
+    attempts = 0  # Count for the players attempts
     while attempts < MAX_TRIES:
         guess = input(f"Enter guess? (Cheat: {target_word})").strip().lower()
         if validate_guess(guess, valid_word_bank):
@@ -208,7 +248,6 @@ def game_loop():
     if attempts == MAX_TRIES:
         print(f"The word was {target_word.upper()}.")
     print("Game Over")
-    # (end loop)
 
 
 def main(test=False):
