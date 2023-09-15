@@ -140,48 +140,7 @@ def score_guess(target, guess):
     # >>> score_guess('motto', 'outgo')
     (1, 0, 2, 0, 2)
     """
-    guess_as_list = list(guess)
-    target_as_list = list(target)
-    hints = [EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2, EMPTY_TUPLE2]
-
-    if guess == target:
-        for position in range(len(guess)):
-            hints[position] = (guess[position], CORRECT)
-    else:
-        target_letter_occurrences = count_char_occurrences(target)
-        guess_letter_occurrences = count_char_occurrences(guess)
-        count = 0  # Index for current position
-        for letter in guess_as_list:
-            if letter == target_as_list[count]:
-                # Updates previous hints if letter marked as MISPLACED but later in the word are CORRECT
-                # Only done if the letter appears in the word more than once to avoid unnecessary calculations
-                if guess_letter_occurrences[letter] > 1:
-                    hint_count = 0
-                    previous_occurrences = 0
-                    for hint in hints:
-                        if hint == (letter, MISPLACED):
-                            previous_occurrences += 1
-                        if previous_occurrences > 1:
-                            hints[hint_count] = (letter, WRONG)
-                            hint_count += 1
-                            previous_occurrences -= 1
-                hints[count] = (letter, CORRECT)
-            elif target.find(letter) != -1:
-                # Checks to make sure the letter is only marked as MISPLACED if it hasn't appeared
-                # more times than it does in the target worde
-                previous_occurrences = 0
-                for hint in hints:
-                    if hint == (letter, MISPLACED) or hint == (letter, CORRECT):
-                        previous_occurrences += 1
-                if previous_occurrences == target_letter_occurrences[letter]:
-                    hints[count] = (letter, WRONG)
-                else:
-                    hints[count] = (letter, MISPLACED)
-            else:
-                hints[count] = (letter, WRONG)
-            count += 1
-    extract_hints(hints)  # Removes the letter of each position in the list
-    return tuple(hints)
+    pass
 
 
 def is_correct(hint):
@@ -252,14 +211,15 @@ def game_loop():
     while attempts < MAX_TRIES:
         guess = input(f"Enter guess? (Cheat: {target_word})\n").strip().lower()
         if validate_guess(guess, valid_word_bank):
-            hint = score_guess(target_word, guess)
-            if is_correct(hint):
-                print(f"Your guess, {guess.upper()}, is correct!\n")
-                break
-            else:
-                print("Your guess is wrong!")
-                format_score(guess, hint)
-                attempts += 1
+            # hint = score_guess(target_word, guess)
+            # if is_correct(hint):
+            #     print(f"Your guess, {guess.upper()}, is correct!\n")
+            #     break
+            # else:
+            #     print("Your guess is wrong!")
+            #     format_score(guess, hint)
+            #     attempts += 1
+            attempts += 1
         else:
             print(f"{guess} is not a valid word. Please Try Again\n")
     if attempts == MAX_TRIES:
