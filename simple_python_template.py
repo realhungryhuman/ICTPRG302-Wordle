@@ -122,7 +122,7 @@ def score_guess(target, guess):
     # >>> score_guess('hello', 'hello')
     (2, 2, 2, 2, 2)
     # >>> score_guess('drain', 'float')
-    (0, 0, 1, 0, 0)
+    (0, 0, 0, 1, 0)
     # >>> score_guess('hello', 'spams')
     (0, 0, 0, 0, 0)
 
@@ -130,17 +130,37 @@ def score_guess(target, guess):
     # >>> score_guess('gauge', 'range')
     (0, 2, 0, 2, 2)
     # >>> score_guess('melee', 'erect')
-    (0, 1, 0, 1, 0)
+    (1, 0, 1, 0, 0)
     # >>> score_guess('array', 'spray')
     (0, 0, 2, 2, 2)
     # >>> score_guess('train', 'tenor')
-    (2, 1, 0, 0, 1)
+    (2, 0, 1, 0, 1)
     # >>> score_guess('outgo', 'motto')
     (0, 1, 2, 0, 2)
-    # >>> score_guess('motto', 'outgo')
+    # >>> score_guess('lotto', 'outgo')
     (1, 0, 2, 0, 2)
     """
-    pass
+    guess_as_list = list(guess)
+    target_as_list = list(target)
+    hints = [0]*5
+
+    for index in range(len(guess_as_list)):
+        if guess_as_list[index] == target_as_list[index]:
+            hints[index] = 2
+            guess_as_list[index] = '-'
+            target_as_list[index] = '-'
+
+    for guess_index in range(len(guess_as_list)):
+        if guess_as_list[guess_index] == '-':
+            continue
+        else:
+            for target_index in range(len(target_as_list)):
+                if guess_as_list[guess_index] == target_as_list[target_index]:
+                    hints[guess_index] = 1
+                    target_as_list[target_index] = '-'
+                    break
+
+    return tuple(hints)
 
 
 def is_correct(hint):
@@ -211,14 +231,13 @@ def game_loop():
     while attempts < MAX_TRIES:
         guess = input(f"Enter guess? (Cheat: {target_word})\n").strip().lower()
         if validate_guess(guess, valid_word_bank):
-            # hint = score_guess(target_word, guess)
-            # if is_correct(hint):
-            #     print(f"Your guess, {guess.upper()}, is correct!\n")
-            #     break
-            # else:
-            #     print("Your guess is wrong!")
-            #     format_score(guess, hint)
-            #     attempts += 1
+            hint = score_guess(target_word, guess)
+            if is_correct(hint):
+                print(f"Your guess, {guess.upper()}, is correct!\n")
+                break
+            else:
+                print("Your guess is wrong!")
+                format_score(guess, hint)
             attempts += 1
         else:
             print(f"{guess} is not a valid word. Please Try Again\n")
