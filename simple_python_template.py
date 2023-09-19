@@ -6,7 +6,6 @@ Guess-My-Word Project Application"""
 
 import random
 
-EMPTY_TUPLE2 = ("", "")  # define a variable for a tuple of two empty strings
 
 CORRECT = 2  # Correct letter in the correct position
 MISPLACED = 1  # Correct letter in the wrong position
@@ -51,41 +50,6 @@ def pick_target_word(target_words):
     """
 
     return random.choice(target_words)
-
-
-def count_char_occurrences(word):
-    """
-    returns a dictionary indexed by character, counting the number of occurrences in a word
-
-    :param word: string
-    :returns: dictionary
-    """
-    character_occurrences = {}
-    for character in word:
-        character_occurrences[character] = character_occurrences.get(character, 0) + 1
-    return character_occurrences
-
-
-def extract_hints(hint_list):
-    """
-    Extracts the character hint from the (letter, hint) tuple
-
-    :param hint_list: list
-    :returns: list
-
-    # >>> extract_hints([(h, 2), (e, 2), (l, 2), (l, 2), (o, 2)])
-    [2, 2, 2, 2, 2]
-    # >>> extract_hints([(h, 0), (e, 0), (l, 1), (l, 0), (o, 2)])
-    [0, 0, 1, 0, 2]
-    # >>> extract_hints([(h, 0), (e, 0), (l, 0), (l, 0), (o, 0)])
-    [0, 0, 0, 0, 0]
-    """
-
-    hint_count = 0
-    for hint in hint_list:
-        (letter, answer) = hint
-        hint_list[hint_count] = answer
-        hint_count += 1
 
 
 def validate_guess(guess, word_list):
@@ -215,10 +179,9 @@ def format_score(guess, hint):
         else:
             formatted_hint.append("_")
     formatted_guess = guess.upper()
-    print(f"Guess: {formatted_guess[0]} {formatted_guess[1]} {formatted_guess[2]} "
-          f"{formatted_guess[3]} {formatted_guess[4]}\n"
-          f"Hint:  {formatted_hint[0]} {formatted_hint[1]} {formatted_hint[2]} "
-          f"{formatted_hint[3]} {formatted_hint[4]}")
+
+    print(f"Guess: {' '.join(str(letter) for letter in formatted_guess)}\n"
+          f"Hint:  {' '.join(str(letter) for letter in formatted_hint)}")
 
 
 def game_loop():
