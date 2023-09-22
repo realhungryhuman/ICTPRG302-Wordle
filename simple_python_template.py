@@ -119,46 +119,43 @@ def score_guess(target, guess):
     :param guess: string
     :returns: tuple
 
-    # >>> score_guess('hello', 'hello')
+    >>> score_guess('hello', 'hello')
     (2, 2, 2, 2, 2)
-    # >>> score_guess('drain', 'float')
+    >>> score_guess('drain', 'float')
     (0, 0, 0, 1, 0)
-    # >>> score_guess('hello', 'spams')
+    >>> score_guess('hello', 'spams')
     (0, 0, 0, 0, 0)
 
     Try and pass the first few tests in the doctest before passing these tests.
-    # >>> score_guess('gauge', 'range')
+    >>> score_guess('gauge', 'range')
     (0, 2, 0, 2, 2)
-    # >>> score_guess('melee', 'erect')
+    >>> score_guess('melee', 'erect')
     (1, 0, 1, 0, 0)
-    # >>> score_guess('array', 'spray')
+    >>> score_guess('array', 'spray')
     (0, 0, 2, 2, 2)
-    # >>> score_guess('train', 'tenor')
+    >>> score_guess('train', 'tenor')
     (2, 0, 1, 0, 1)
-    # >>> score_guess('outgo', 'motto')
+    >>> score_guess('outgo', 'motto')
     (0, 1, 2, 0, 2)
-    # >>> score_guess('lotto', 'outgo')
+    >>> score_guess('lotto', 'outgo')
     (1, 0, 2, 0, 2)
     """
     guess_as_list = list(guess)
     target_as_list = list(target)
     hints = [0]*5
 
-    for index in range(len(guess_as_list)):
-        if guess_as_list[index] == target_as_list[index]:
-            hints[index] = 2
-            guess_as_list[index] = '-'
-            target_as_list[index] = '-'
+    for letter_position in range(len(guess_as_list)):
+        if guess_as_list[letter_position] == target_as_list[letter_position]:
+            hints[letter_position] = 2
+            guess_as_list[letter_position], target_as_list[letter_position] = '-'*2
 
-    for guess_index in range(len(guess_as_list)):
-        if guess_as_list[guess_index] == '-':
+    for letter_position in range(len(guess_as_list)):
+        if guess_as_list[letter_position] == '-':
             continue
         else:
-            for target_index in range(len(target_as_list)):
-                if guess_as_list[guess_index] == target_as_list[target_index]:
-                    hints[guess_index] = 1
-                    target_as_list[target_index] = '-'
-                    break
+            if guess_as_list[letter_position] in target_as_list:
+                target_as_list[target_as_list.index(guess_as_list[letter_position])] = '-'
+                hints[letter_position] = 1
 
     return tuple(hints)
 
