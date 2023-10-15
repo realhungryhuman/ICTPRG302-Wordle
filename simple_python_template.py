@@ -38,6 +38,8 @@ def open_word_bank(word_bank_file):
     """
     word_bank = open(word_bank_file)
     words = word_bank.read().splitlines()
+    word_bank.close()
+
     return words
 
 
