@@ -117,9 +117,7 @@ def score_guess(target, guess):
             target_as_list[index] = '-'
 
     for guess_index in range(len(guess_as_list)):
-        if guess_as_list[guess_index] == '-':
-            continue
-        else:
+        if guess_as_list[guess_index] != '-':
             for target_index in range(len(target_as_list)):
                 if guess_as_list[guess_index] == target_as_list[target_index]:
                     hints[guess_index] = 1
