@@ -62,11 +62,11 @@ def validate_guess(guess, word_list):
     :param word_list: list
     :returns: bool
 
-    # >>> validate_guess("hello", VALID_WORDS)
+    >>> validate_guess("hello", ["happy", "hello", "shape", "steal"])
     True
-    # >>> validate_guess("steal", VALID_WORDS)
+    >>> validate_guess("steal", ["happy", "hello", "shape", "steal"])
     True
-    # >>> validate_guess("xxxxx", VALID_WORDS)
+    >>> validate_guess("xxxxx", ["happy", "hello", "shape", "steal"])
     False
     """
 
@@ -85,25 +85,25 @@ def score_guess(target, guess):
     :param guess: string
     :returns: tuple
 
-    # >>> score_guess('hello', 'hello')
+    >>> score_guess('hello', 'hello')
     (2, 2, 2, 2, 2)
-    # >>> score_guess('drain', 'float')
+    >>> score_guess('drain', 'float')
     (0, 0, 0, 1, 0)
-    # >>> score_guess('hello', 'spams')
+    >>> score_guess('hello', 'spams')
     (0, 0, 0, 0, 0)
 
     Try and pass the first few tests in the doctest before passing these tests.
-    # >>> score_guess('gauge', 'range')
+    >>> score_guess('gauge', 'range')
     (0, 2, 0, 2, 2)
-    # >>> score_guess('melee', 'erect')
+    >>> score_guess('melee', 'erect')
     (1, 0, 1, 0, 0)
-    # >>> score_guess('array', 'spray')
+    >>> score_guess('array', 'spray')
     (0, 0, 2, 2, 2)
-    # >>> score_guess('train', 'tenor')
+    >>> score_guess('train', 'tenor')
     (2, 0, 1, 0, 1)
-    # >>> score_guess('outgo', 'motto')
+    >>> score_guess('outgo', 'motto')
     (0, 1, 2, 0, 2)
-    # >>> score_guess('lotto', 'outgo')
+    >>> score_guess('lotto', 'outgo')
     (1, 0, 2, 0, 2)
     """
     guess_as_list = list(guess)
@@ -134,13 +134,13 @@ def is_correct(hint):
     :returns: bool
 
     Examples:
-    # >>> is_correct((1,1,1,1,1))
+    >>> is_correct((1,1,1,1,1))
     False
-    # >>> is_correct((2,2,2,2,1))
+    >>> is_correct((2,2,2,2,1))
     False
-    # >>> is_correct((0,0,0,0,0))
+    >>> is_correct((0,0,0,0,0))
     False
-    # >>> is_correct((2,2,2,2,2))
+    >>> is_correct((2,2,2,2,2))
     True
     """
 
@@ -156,18 +156,22 @@ def format_score(guess, hint):
     :param guess: string
     :param hint: tuple
 
-    # >>> format_score('hello', (0,0,0,0,0))
+    >>> format_score('hello', (0,0,0,0,0))
     Guess: H E L L O
     Hint:  _ _ _ _ _
-    # >>> format_score('hello', (0,0,0,1,1))
+    <BLANKLINE>
+    >>> format_score('hello', (0,0,0,1,1))
     Guess: H E L L O
     Hint:  _ _ _ ? ?
-    # >>> format_score('hello', (1,0,0,2,1))
+    <BLANKLINE>
+    >>> format_score('hello', (1,0,0,2,1))
     Guess: H E L L O
     Hint:  ? _ _ + ?
-    # >>> format_score('hello', (2,2,2,2,2))
+    <BLANKLINE>
+    >>> format_score('hello', (2,2,2,2,2))
     Guess: H E L L O
     Hint:  + + + + +
+    <BLANKLINE>
     """
 
     formatted_hint = []
@@ -181,7 +185,7 @@ def format_score(guess, hint):
     formatted_guess = guess.upper()
 
     print(f"Guess: {' '.join(str(letter) for letter in formatted_guess)}\n"
-          f"Hint:  {' '.join(str(letter) for letter in formatted_hint)}")
+          f"Hint:  {' '.join(str(letter) for letter in formatted_hint)}\n")
 
 
 def game_loop():
@@ -196,14 +200,14 @@ def game_loop():
         if validate_guess(guess, valid_word_bank):
             hint = score_guess(target_word, guess)
             if is_correct(hint):
-                print(f"Your guess, {guess.upper()}, is correct!\n")
+                print(f"\nYour guess, {guess.upper()}, is correct!\n")
                 break
             else:
-                print("Your guess is wrong!")
+                print("\nYour guess is wrong!\n")
                 format_score(guess, hint)
             attempts += 1
         else:
-            print(f"{guess} is not a valid word. Please Try Again\n")
+            print(f"\n{guess.upper()} is not a valid word. Please Try Again\n")
     if attempts == MAX_TRIES:
         print(f"The word was {target_word.upper()}.")
     print("Game Over")
@@ -212,10 +216,10 @@ def game_loop():
 def main(test=False):
     if test:
         import doctest
-        doctest.testmod()
+        return doctest.testmod()
     guess_my_word_help()
     game_loop()
 
 
 if __name__ == '__main__':
-    main(test=True)
+    main(test=False)
