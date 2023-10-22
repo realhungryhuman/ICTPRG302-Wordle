@@ -108,11 +108,11 @@ def score_guess(target, guess):
     """
     guess_as_list = list(guess)
     target_as_list = list(target)
-    hints = [0]*5
+    hints = [WRONG]*5
 
     for index in range(len(guess_as_list)):
         if guess_as_list[index] == target_as_list[index]:
-            hints[index] = 2
+            hints[index] = CORRECT
             guess_as_list[index] = '-'
             target_as_list[index] = '-'
 
@@ -120,7 +120,7 @@ def score_guess(target, guess):
         if guess_as_list[guess_index] != '-':
             for target_index in range(len(target_as_list)):
                 if guess_as_list[guess_index] == target_as_list[target_index]:
-                    hints[guess_index] = 1
+                    hints[guess_index] = MISPLACED
                     target_as_list[target_index] = '-'
                     break
 
