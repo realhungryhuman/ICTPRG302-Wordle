@@ -57,7 +57,7 @@ def pick_target_word(target_words):
 def get_player_name():
     player = ""
     while player == "" or player.find(" ") != -1:
-        player = input("Enter Player Name: ")
+        player = input("Enter Player Name (No Spaces): ")
         print()
         if player == "" or player.find(" ") != -1:
             print("Please enter a Name.")
