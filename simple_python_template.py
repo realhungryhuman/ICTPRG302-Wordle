@@ -55,6 +55,12 @@ def pick_target_word(target_words):
 
 
 def get_player_name():
+    """
+        returns a player name entered by the user
+
+        :returns: string
+    """
+
     player = ""
     while player == "" or player.find(" ") != -1:
         player = input("Enter Player Name (No Spaces): ")
